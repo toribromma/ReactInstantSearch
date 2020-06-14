@@ -1,18 +1,65 @@
-import { InstantSearch } from 'react-instantsearch-dom';
 import React, {Component} from 'react';
-import logo from './logo.svg';
+import "./App.css"
+import algoliasearch from 'algoliasearch/lite';
+import {
+  InstantSearch,
+  Hits,
+  SearchBox,
+  Pagination,
+  Highlight,
+  ClearRefinements,
+  RefinementList,
+  Configure,
+} from 'react-instantsearch-dom';
 import './App.css';
+import PropTypes from 'prop-types';
+
+const searchClient = algoliasearch(
+  'B1G2GM9NG0',
+  'aadef574be1f9252bb48d4ea09b5cfe5'
+);
+
 
 function App() {
   return (
-    <div className="App">
+    <div className="ais-InstantSearch">
       <InstantSearch
-      appId="latency"
-      apiKey="3d9875e51fbd20c7754e65422f7ce5e1"
-      indexName="bestbuy"
-      ></InstantSearch>
+      indexName="demo_ecommerce"
+      searchClient={searchClient}
+      >
+      <div className="left-panel">
+        <ClearRefinements />
+        <h2>Brands</h2>
+        <RefinementList attribute="brand"/>
+        <Configure hitsPerPage={8} />
+      </div>
+        <div className="right-panel">
+          <SearchBox/>
+          <Hits hitComponent={Hit} />
+          <Pagination/>
+        </div>
+      </InstantSearch>
     </div>
   );
 }
+
+function Hit(props) {
+  return (
+    <div>
+      <img src={props.hit.image} align="left" alt={props.hit.name} />
+      <div className="hit-name">
+        <Highlight attribute="name" hit={props.hit} />
+      </div>
+      <div className="hit-description">
+        <Highlight attribute="description" hit={props.hit} />
+      </div>
+      <div className="hit-price">${props.hit.price}</div>
+    </div>
+  );
+}
+
+Hit.propTypes = {
+  hit: PropTypes.object.isRequired,
+};
 
 export default App;
